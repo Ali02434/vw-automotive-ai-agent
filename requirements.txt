@@ -1,0 +1,7 @@
+requests  # HTTP requests, request to Ollama 
+beautifulsoup4  # extract text from HTML
+pyyaml 
+pytest 
+python-dotenv 
+openpyxl 
+rapidfuzz  #compare duplicates
