@@ -50,6 +50,7 @@ Before you start, make sure the following is installed on your machine:
 
 5. In VS Code, select the interpreter from `.venv`:
    `Ctrl+Shift+P` → **Python: Select Interpreter** → choose the entry with `.venv`.
+   Copy `.env.example` to `.env` and enter your own email credentials.
 
 ## Usage
 
@@ -70,6 +71,7 @@ All settings are stored in `config.yaml`:
 | `llm.url` | Address of the Ollama server |
 | `shops` | Online shops the agent searches |
 | `areas` | Vehicle areas used for classification |
+
 
 ## Project structure
 
