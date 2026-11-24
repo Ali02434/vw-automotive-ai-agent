@@ -1,32 +1,44 @@
-#TODO für LLM-Extraktion
 import requests
 import json
 
-#beispielseite solange wie issue 3 noch nicht umgesetzt ist.
-example_text = "Sportauspuff Edelstahl für VW Golf 8 GTI. Klappenauspuff mit 2x 100 mm Endrohren, satter Sound, TÜV-geprüft mit ABE. Lieferzeit 3-5 Werktage. Preis: 649,90 € inkl. MwSt."
 
+def extract_info(text, config):
+    # NEU: lange Shopseiten kürzen, sonst schneidet Ollama den Text ab
+    text = text[:4000]
 
+    # NEU: bereinigter Prompt, Regeln vor dem Text
+    prompt = f"""Du bist ein Experte für die Extraktion von Produktdaten aus Texten von Online-Shops für Fahrzeugmodifikationen und Zubehör.
+Extrahiere aus dem folgenden Text die Informationen zum Produkt und gib sie als JSON mit den Schlüsseln name, beschreibung und preis zurück.
 
+Regeln:
+- Verwende nur Informationen, die im Text stehen. Erfinde nichts.
+- Wenn eine Information fehlt, trage null ein.
+- Gib den Preis als Zahl mit Punkt und ohne Währung an, z. B. 289.90.
 
-def extract_info(text_fahrzeug, config):
-    prompt =  f"""
-    Du bist ein Experte für die Extraktion von Fahrzeugmerkmalen von Produkttexten aus Online-Shops. Untersuche den folgenden Text und extrahiere die relevanten Informationen zu den Fahrzeugmerkmalen. Gib die Ergebnisse in einem JSON Format  zurück, das die folgenden Bereiche Name, Beschreibung, Preis deckt. Verwende die JSON Schlüssel name, beschreibung, preis Wenn du nichts passendes findest, trag null ein. Gib den Preis als Zahl mit Punkt  ohne Währung an.
-    Verwende Nur die Informationen, die im Text enthalten sind. Gib keine zusätzlichen Informationen oder Annahmen an. Achte darauf, dass das JSON-Format korrekt ist und keine zusätzlichen Zeichen oder Kommentare enthält.
-    ---
-    Text: {text_fahrzeug} \n
-    ---
-    """
+---
+{text}
+---"""
 
-    schema = {"type": "object", "properties": {"name": {"type": "string"}, "beschreibung": {"type": "string"}, "preis": {"type": "number"}}}
-
+    # NEU: null erlaubt und alle Felder Pflicht
+    schema = {
+        "type": "object",
+        "properties": {
+            "name": {"type": ["string", "null"]},
+            "beschreibung": {"type": ["string", "null"]},
+            "preis": {"type": ["number", "null"]}
+        },
+        "required": ["name", "beschreibung", "preis"]
+    }
 
     r = requests.post(
-        config["llm"]["url"] + "/api/generate",json={
+        config["llm"]["url"] + "/api/generate",
+        json={
             "model": config["llm"]["model"],
             "prompt": prompt,
             "stream": False,
             "think": False,
             "format": schema
-        })
+        }
+    )
 
     return json.loads(r.json()["response"])

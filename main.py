@@ -1,6 +1,7 @@
 from agent.settings import loadconfig
 from agent.shops import find_products
 from agent.llm import extract_info
+from agent.database import save_product
 
 
 if __name__ == "__main__":
@@ -8,4 +9,5 @@ if __name__ == "__main__":
     for shop in config["shops"]:
         for product in find_products(shop, limit=min(3, config["limit"])):
             result = extract_info(product["text"], config)
+            save_product({**result, "url":product["url"]})
             print(product["url"], result)
