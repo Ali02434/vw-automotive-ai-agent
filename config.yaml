@@ -5,9 +5,7 @@ llm:
   model: "qwen3:8b" #the model to use for the search.
   url: "http://localhost:11434" #the url of the model server.
 shops:
-  - "https://beispiel-shop.de"
-  - "https://another-shop.de"
-  - "https://shop.example.com"
+  - "https://www.flamingo-tuning.de/"
 areas: 
   - "Antriebsstrang" 
   - "Interieur" 

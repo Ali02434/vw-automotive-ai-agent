@@ -1,11 +1,11 @@
 from agent.settings import loadconfig
-from agent.llm import extract_info, example_text
+from agent.shops import find_products
+from agent.llm import extract_info
+
 
 if __name__ == "__main__":
     config = loadconfig()
-    print("Suchlauf gestartet \n")
-    print(config.get("limit"))
-    print(config.get("llm").get("model"))
-
-    ergebnis = extract_info(example_text, config)
-    print(ergebnis)
+    for shop in config["shops"]:
+        for product in find_products(shop, limit=min(3, config["limit"])):
+            result = extract_info(product["text"], config)
+            print(product["url"], result)
